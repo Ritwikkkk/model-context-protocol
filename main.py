@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import create_agent
+import warnings
+warnings.filterwarnings("ignore")
+
 
 load_dotenv()
 
@@ -32,10 +35,12 @@ async def run_agent():
     agent = create_agent(
     model=llm,
     tools=tools,
-    system_prompt="You are a web search agent with access to brightdata tool to get latest data."
+    system_prompt="You are a web search agent with access to brightdata tool to get latest data.",
     )
-    agent_response = await agent.ainvoke({"messages": "How many runs did Virat Kohli score in today's Vijay Hazare Trophy match against AP?"})
+    agent_response = await agent.ainvoke({
+    "messages": [{"role": "user", "content": "How many runs did Virat Kohli score in today's Vijay Hazare Trophy match against AP?"}]
+    })
     print(agent_response["messages"][-1].content)
-    
-if __name__ == "main":
+
+if __name__ == "__main__":
     asyncio.run(run_agent())
